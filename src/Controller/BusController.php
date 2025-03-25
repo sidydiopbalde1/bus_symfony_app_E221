@@ -46,4 +46,18 @@ final class BusController extends AbstractController
         
         return $this->json(['message' => 'Bus créé avec succès', 'bus' => $bus]);
     }
+    #[Route('/{immatriculation}', methods: ['DELETE'])]
+    public function deleteBus(BusRepository $busRepository,EntityManagerInterface $entityManager,string $immatriculation): JsonResponse
+    {
+        $bus = $busRepository->findOneBy(['immatriculation' => $immatriculation]);
+
+        if (!$bus) {
+            return $this->json(['message' => 'Bus non trouvé'], 404);
+        }
+
+        $entityManager->remove($bus);
+        $entityManager->flush();
+
+        return $this->json(['message' => 'Bus supprimé avec succès']);
+    }
 }
