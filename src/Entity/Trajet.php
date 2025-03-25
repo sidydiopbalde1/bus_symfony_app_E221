@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\TrajetRepository;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TrajetRepository;
 
 #[ORM\Entity(repositoryClass: TrajetRepository::class)]
 class Trajet
@@ -15,24 +15,19 @@ class Trajet
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $date = null;
+    #[ORM\Column(type: "string", length: 100)]
+    private string $type;
 
-    /**
-     * @var Collection<int, Ticket>
-     */
-    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'trajet')]
+    #[ORM\Column(type: "integer")]
+    private int $nbrTicket;
+
+    #[ORM\OneToMany(mappedBy: "trajet", targetEntity: Ticket::class, cascade: ["persist", "remove"])]
     private Collection $tickets;
 
-     /** @ORM\Column(type="string", enumType=TypeTrajet::class) */
-     private string $type;
+    #[ORM\ManyToOne(targetEntity: Ligne::class, inversedBy: "trajets")]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Ligne $ligne = null;
 
-    public function getType(): string{
-        return $this->type;
-    }
-    public function setType(string $type){
-        $this->type = $type;
-    }
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
@@ -43,15 +38,25 @@ class Trajet
         return $this->id;
     }
 
-    public function getDate(): ?\DateTimeImmutable
+    public function getType(): string
     {
-        return $this->date;
+        return $this->type;
     }
 
-    public function setDate(\DateTimeImmutable $date): static
+    public function setType(string $type): self
     {
-        $this->date = $date;
+        $this->type = $type;
+        return $this;
+    }
 
+    public function getNbrTicket(): int
+    {
+        return $this->nbrTicket;
+    }
+
+    public function setNbrTicket(int $nbrTicket): self
+    {
+        $this->nbrTicket = $nbrTicket;
         return $this;
     }
 
@@ -63,7 +68,7 @@ class Trajet
         return $this->tickets;
     }
 
-    public function addTicket(Ticket $ticket): static
+    public function addTicket(Ticket $ticket): self
     {
         if (!$this->tickets->contains($ticket)) {
             $this->tickets->add($ticket);
@@ -73,15 +78,25 @@ class Trajet
         return $this;
     }
 
-    public function removeTicket(Ticket $ticket): static
+    public function removeTicket(Ticket $ticket): self
     {
         if ($this->tickets->removeElement($ticket)) {
-            // set the owning side to null (unless already changed)
             if ($ticket->getTrajet() === $this) {
                 $ticket->setTrajet(null);
             }
         }
 
+        return $this;
+    }
+
+    public function getLigne(): ?Ligne
+    {
+        return $this->ligne;
+    }
+
+    public function setLigne(?Ligne $ligne): self
+    {
+        $this->ligne = $ligne;
         return $this;
     }
 }
