@@ -15,10 +15,14 @@ class Arret
 
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
+
     #[ORM\ManyToOne(targetEntity: Ligne::class, inversedBy: "arrets")]
     #[ORM\JoinColumn(nullable: false)]
     private ?Ligne $ligne = null;
-    
+
+    #[ORM\Column(type: "integer")]
+    private int $numero;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -43,6 +47,16 @@ class Arret
     public function setLigne(?Ligne $ligne): self
     {
         $this->ligne = $ligne;
+        return $this;
+    }
+
+    public function getNumero(): int
+    {
+        return $this->numero;
+    }
+    public function setNumero(int $numero): self
+    {
+        $this->numero = $numero;
         return $this;
     }
 }
