@@ -44,6 +44,6 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     protected function getLoginUrl(Request $request): string
     {
-        return $this->router->generate('app_login'); // Page de connexion
+        return $this->router->generate('api_login'); // Page de connexion
     }
 }

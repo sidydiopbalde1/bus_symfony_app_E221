@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class LoginController extends AbstractController
 {
-    #[Route('/api/login', name: 'api_login', methods: ['POST', 'OPTIONS'])]
+#[Route('/api/login', name: 'api_login', methods: ['POST', 'OPTIONS'])]
 public function login(Request $request, JWTTokenManagerInterface $jwtManager, UserRepository $userRepository): Response
 {
     // CORS Preflight Handling
