@@ -157,4 +157,15 @@ class Bus
 
         return $this;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'immatriculation' => $this->getImmatriculation(),
+            'type' => $this->getType(),
+            'nbrePlaces' => $this->getNbrePlaces(),
+            'kilométrage' => $this->getKilometrage(),
+            'enCirculation' => $this->isEnCirculation(),];
+    }
 }

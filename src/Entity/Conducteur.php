@@ -120,4 +120,18 @@ class Conducteur
         }
         return $this;
     }
+
+    // src/Entity/Conducteur.php
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'nom' => $this->getNom(),
+            'prenom' => $this->getPrenom(),
+            'matricule' => $this->getMatricule(),
+            'telephone' => $this->getTelephone(),
+            'typePermis' => $this->getTypePermis(),];
+    }
+
 }
