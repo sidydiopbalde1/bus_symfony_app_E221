@@ -27,7 +27,6 @@ class CreateUserCommand extends Command
         $user = new User();
         $user->setEmail('rt@gmail.com');
         
-        // Use the updated PasswordHasherInterface
         $hashedPassword = $this->passwordHasher->hashPassword($user, 'passer123'); 
         $user->setPassword($hashedPassword);
         $user->setRoles(['ROLE_RT']);
