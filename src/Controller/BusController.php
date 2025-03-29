@@ -28,25 +28,32 @@ final class BusController extends AbstractController
     public function create(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        
+    
+        if (!isset($data['immatriculation'], $data['type'], $data['kilometrage'], $data['nbrePlaces'], $data['enCirculation'])) {
+            return $this->json(['message' => 'Des données requises sont manquantes.'], 400);
+        }
+    
         $bus = new Bus();
         $bus->setImmatriculation($data['immatriculation'])
             ->setType(BusType::from($data['type']))
             ->setKilometrage($data['kilometrage'])
             ->setNbrePlaces($data['nbrePlaces'])
             ->setEnCirculation($data['enCirculation']);
-        
-        if ($data['conducteur']) {
+    
+        if (isset($data['conducteur'])) {
             $conducteur = $entityManager->getRepository(Conducteur::class)->find($data['conducteur']);
+            if (!$conducteur) {
+                return $this->json(['message' => 'Conducteur non trouvé'], 404);
+            }
             $bus->setConducteur($conducteur);
         }
-        
+    
         $entityManager->persist($bus);
         $entityManager->flush();
-        
+    
         return $this->json(['message' => 'Bus créé avec succès', 'bus' => $bus]);
     }
-    #[Route('/{immatriculation}', methods: ['DELETE'])]
+    #[Route('/bus/delete/{immatriculation}', methods: ['DELETE','GET'])]
     public function deleteBus(BusRepository $busRepository,EntityManagerInterface $entityManager,string $immatriculation): JsonResponse
     {
         $bus = $busRepository->findOneBy(['immatriculation' => $immatriculation]);
