@@ -42,9 +42,8 @@ final class ConducteursController extends AbstractController
             ->setPrenom($data['prenom'])
             ->setTypePermis($data['typePermis'])
             ->setMatricule($data['matricule'])
-            ->setTelephone($data['telephone']);
-    
-     
+            ->setTelephone($data['telephone'])
+            ->setDisponible(true);
     
         $entityManager->persist($conducteur);
         $entityManager->flush();
@@ -52,6 +51,21 @@ final class ConducteursController extends AbstractController
         return $this->json(['message' => 'conducteur créé avec succès', 'conducteur' => $conducteur]);
     }
     
+    //delete
+    #[Route('/conducteurs/delete/{matricule}', name: 'conducteur_delete', methods: ['DELETE','GET'])]
+    public function delete(ConducteursRepository $conducteursRepository, EntityManagerInterface $entityManager, string $matricule): JsonResponse
+    {
+        $conducteur = $conducteursRepository->findOneBy(['matricule' => $matricule]);
+    
+        if (!$conducteur) {
+            return $this->json(['message' => 'Conducteur non trouvé'], 404);
+        }
+    
+        $entityManager->remove($conducteur);
+        $entityManager->flush();
+    
+        return $this->json(['message' => 'Conducteur supprimé avec succès']);
+    }
        
 }
 
