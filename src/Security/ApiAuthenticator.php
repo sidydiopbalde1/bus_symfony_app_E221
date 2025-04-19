@@ -8,37 +8,64 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use App\Repository\UserRepository;
 
 class ApiAuthenticator extends AbstractAuthenticator
 {
+    private JWTEncoderInterface $jwtEncoder;
+    private UserRepository $userRepository;
+
+    public function __construct(JWTEncoderInterface $jwtEncoder, UserRepository $userRepository)
+    {
+        $this->jwtEncoder = $jwtEncoder;
+        $this->userRepository = $userRepository;
+    }
+
     public function supports(Request $request): ?bool
     {
-        // TODO: Implement supports() method.
+        return $request->headers->has('Authorization');
     }
 
     public function authenticate(Request $request): Passport
     {
-        // TODO: Implement authenticate() method.
+        $authorizationHeader = $request->headers->get('Authorization');
+
+        if (!$authorizationHeader || !preg_match('/Bearer\s(\S+)/', $authorizationHeader, $matches)) {
+            throw new CustomUserMessageAuthenticationException('Token JWT non fourni ou mal formaté.');
+        }
+
+        $jwtToken = $matches[1];
+
+        try {
+            $payload = $this->jwtEncoder->decode($jwtToken);
+        } catch (\Exception $e) {
+            throw new CustomUserMessageAuthenticationException('Token JWT invalide.');
+        }
+
+        if (!isset($payload['username'])) {
+            throw new CustomUserMessageAuthenticationException('Token JWT invalide, aucun utilisateur trouvé.');
+        }
+
+        $user = $this->userRepository->findOneBy(['email' => $payload['username']]);
+
+        if (!$user) {
+            throw new CustomUserMessageAuthenticationException('Utilisateur non trouvé.');
+        }
+
+        return new SelfValidatingPassport(new UserBadge($user->getUserIdentifier()));
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        // TODO: Implement onAuthenticationSuccess() method.
+        return null;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        // TODO: Implement onAuthenticationFailure() method.
+        return new Response(json_encode(['message' => 'Échec de l\'authentification: ' . $exception->getMessage()]), Response::HTTP_UNAUTHORIZED, ['Content-Type' => 'application/json']);
     }
-
-    //    public function start(Request $request, ?AuthenticationException $authException = null): Response
-    //    {
-    //        /*
-    //         * If you would like this class to control what happens when an anonymous user accesses a
-    //         * protected page (e.g. redirect to /login), uncomment this method and make this class
-    //         * implement Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface.
-    //         *
-    //         * For more details, see https://symfony.com/doc/current/security/experimental_authenticators.html#configuring-the-authentication-entry-point
-    //         */
-    //    }
 }

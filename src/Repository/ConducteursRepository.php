@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Conducteurs;
+use App\Entity\Conducteur;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -13,7 +13,7 @@ class ConducteursRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Conducteurs::class);
+        parent::__construct($registry, Conducteur::class);
     }
 
 //    /**

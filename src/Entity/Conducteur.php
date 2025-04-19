@@ -32,6 +32,9 @@ class Conducteur
     #[ORM\OneToMany(mappedBy: "conducteur", targetEntity: Bus::class)]
     private $buses;
 
+    #[ORM\Column]
+    private ?bool $disponible = null;
+
     public function __construct()
     {
         $this->buses = new ArrayCollection();
@@ -119,5 +122,33 @@ class Conducteur
             }
         }
         return $this;
+    }
+
+    // src/Entity/Conducteur.php
+
+  
+
+    public function isDisponible(): ?bool
+    {
+        return $this->disponible;
+    }
+
+    public function setDisponible(bool $disponible): static
+    {
+        $this->disponible = $disponible;
+
+        return $this;
+    }
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'nom' => $this->getNom(),
+            'prenom' => $this->getPrenom(),
+            'matricule' => $this->getMatricule(),
+            'telephone' => $this->getTelephone(),
+            'typePermis' => $this->getTypePermis(),
+            'disponible' => $this->isDisponible(),
+        ];
     }
 }
