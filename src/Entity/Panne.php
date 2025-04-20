@@ -17,14 +17,15 @@ class Panne
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\Column(type:'string')]
-    private string $description ;
+    #[ORM\Column(type: 'string', length: 255)]
+    private string $description; // ✅ avec length explicite
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'boolean')]
     private ?bool $isEtat = null;
 
-    #[ORM\ManyToOne(inversedBy: 'pannes')]
-    private ?Bus $bus = null;
+    #[ORM\ManyToOne(targetEntity: Bus::class, inversedBy: 'pannes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Bus $bus = null; // ✅ ajout de JoinColumn
 
     public function getId(): ?int
     {
@@ -36,10 +37,9 @@ class Panne
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): static
+    public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
-
         return $this;
     }
 
@@ -48,10 +48,9 @@ class Panne
         return $this->description;
     }
 
-    public function setDescription(string $description): static
+    public function setDescription(string $description): self
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -60,10 +59,9 @@ class Panne
         return $this->isEtat;
     }
 
-    public function setIsEtat(bool $isEtat): static
+    public function setIsEtat(bool $isEtat): self
     {
         $this->isEtat = $isEtat;
-
         return $this;
     }
 
@@ -72,10 +70,9 @@ class Panne
         return $this->bus;
     }
 
-    public function setBus(?Bus $bus): static
+    public function setBus(?Bus $bus): self
     {
         $this->bus = $bus;
-
         return $this;
     }
 }

@@ -2,18 +2,49 @@
 
 namespace App\Controller;
 
+use App\Dto\Arret\CreateArretRequest;
+use App\Interfaces\Services\Arret\ArretServiceInterface;
+use App\Service\Validator\RequestValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Response;
 
-final class ArretController extends AbstractController
+#[Route('/arrets')]
+class ArretController extends AbstractController
 {
-    #[Route('/arret', name: 'app_arret')]
-    public function index(): JsonResponse
+    public function __construct(
+        private ArretServiceInterface $arretService,
+        private RequestValidator $requestValidator
+    ) {}
+
+    #[Route('', name: 'create_arret', methods: ['POST'])]
+    public function create(Request $request): JsonResponse
     {
+        $dto = $this->requestValidator->validate($request->getContent(), CreateArretRequest::class);
+        $arret = $this->arretService->create($dto);
+
         return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/ArretController.php',
-        ]);
+            'id' => $arret->getId(),
+            'message' => 'Arrêt créé avec succès'
+        ], Response::HTTP_CREATED);
+    }
+
+    #[Route('/ligne/{id}', name: 'get_arrets_by_ligne', methods: ['GET'])]
+    public function getByLigne(int $id): JsonResponse
+    {
+        $arrets = $this->arretService->getByLigne($id);
+
+        $data = array_map(function ($a) {
+            return [
+                'id' => $a->getId(),
+                'nom' => $a->getNom(),
+                'numero' => $a->getNumero(),
+                'ligneId' => $a->getLigne()->getId()
+            ];
+        }, $arrets);
+
+        return $this->json($data);
     }
 }

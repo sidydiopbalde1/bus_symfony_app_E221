@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\TicketRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TicketRepository::class)]
 class Ticket
@@ -14,63 +14,44 @@ class Ticket
     private ?int $id = null;
 
     #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
-    private float $prix;
+    private string $prix; // ✅ corrigé en string
 
     #[ORM\Column(type: "datetime")]
     private \DateTimeInterface $dateVente;
 
-    #[ORM\Column(type: "string", length: 50)]
+    #[ORM\Column(length: 50)]
     private string $etat;
 
     #[ORM\ManyToOne(targetEntity: Trajet::class, inversedBy: "tickets")]
     #[ORM\JoinColumn(nullable: false)]
     private ?Trajet $trajet = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    public function getId(): ?int { return $this->id; }
 
-    public function getPrix(): float
-    {
-        return $this->prix;
-    }
+    public function getPrix(): string { return $this->prix; }
 
-    public function setPrix(float $prix): self
-    {
+    public function setPrix(string $prix): self {
         $this->prix = $prix;
         return $this;
     }
 
-    public function getDateVente(): \DateTimeInterface
-    {
-        return $this->dateVente;
-    }
+    public function getDateVente(): \DateTimeInterface { return $this->dateVente; }
 
-    public function setDateVente(\DateTimeInterface $dateVente): self
-    {
+    public function setDateVente(\DateTimeInterface $dateVente): self {
         $this->dateVente = $dateVente;
         return $this;
     }
 
-    public function getEtat(): string
-    {
-        return $this->etat;
-    }
+    public function getEtat(): string { return $this->etat; }
 
-    public function setEtat(string $etat): self
-    {
+    public function setEtat(string $etat): self {
         $this->etat = $etat;
         return $this;
     }
 
-    public function getTrajet(): ?Trajet
-    {
-        return $this->trajet;
-    }
+    public function getTrajet(): ?Trajet { return $this->trajet; }
 
-    public function setTrajet(?Trajet $trajet): self
-    {
+    public function setTrajet(?Trajet $trajet): self {
         $this->trajet = $trajet;
         return $this;
     }
