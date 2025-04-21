@@ -4,8 +4,8 @@ namespace App\Controller;
 
 use App\Dto\Arret\CreateArretRequest;
 use App\Interfaces\Services\Arret\ArretServiceInterface;
-use App\Service\RequestValidator as ServiceRequestValidator;
-use App\Service\Validator\RequestValidator;
+//use App\Service\RequestValidator as ServiceRequestValidator;
+use App\Service\Validator\RequestValidator   as ServiceRequestValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

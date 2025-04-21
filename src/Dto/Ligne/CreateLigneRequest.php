@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Dto\Ligne;
 
 use Symfony\Component\Validator\Constraints as Assert;
