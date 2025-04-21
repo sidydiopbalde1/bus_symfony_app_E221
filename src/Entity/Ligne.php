@@ -6,7 +6,6 @@ use App\Repository\Ligne\LigneRepository as LigneLigneRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\LigneRepository;
 
 #[ORM\Entity(repositoryClass: LigneLigneRepository::class)]
 class Ligne

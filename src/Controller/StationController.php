@@ -20,7 +20,7 @@ final class StationController extends AbstractController
 
         return $this->json([
             'message' => 'Liste des stations',
-            'data' => $data,
+            'station' => $data,
         ]);
     }
 
@@ -43,4 +43,5 @@ final class StationController extends AbstractController
 
         return $this->json(['message' => 'Station créée', 'data' => $station->toArray()]);
     }
+    
 }

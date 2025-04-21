@@ -24,13 +24,11 @@ final class LignesController extends AbstractController
     #[Route('', name: 'get_lignes', methods: ['GET'])]
     public function index(LigneRepository $ligneRepository): JsonResponse
     {
-        // $lignes = $this->ligneService->getLignesWithArretCount();
         $lignes = $ligneRepository->findAll();
         $data = array_map(fn(Ligne $lg) => $lg->toArray(), $lignes);
 
         return $this->json($data);
     }
-  
     
     #[Route('', name: 'create_ligne', methods: ['POST'])]
     public function create(Request $request): JsonResponse
