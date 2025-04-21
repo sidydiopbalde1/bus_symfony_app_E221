@@ -101,6 +101,7 @@ class Ligne
     {
         return $this->arrets;
     }
+ 
     public function getStationDepart(): ?Station { return $this->stationDepart; }
 
     public function setStationDepart(?Station $station): self { $this->stationDepart = $station; return $this; }
@@ -108,7 +109,7 @@ class Ligne
 
     public function setStationArrivee(?Station $station): self { $this->stationArrivee = $station; return $this; }
 
-public function toArray(): array
+    public function toArray(): array
     {
         return [
             'id' => $this->getId(),
