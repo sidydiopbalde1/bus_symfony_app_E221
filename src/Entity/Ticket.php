@@ -14,7 +14,7 @@ class Ticket
     private ?int $id = null;
 
     #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
-    private string $prix; // ✅ corrigé en string
+    private string $prix; 
 
     #[ORM\Column(type: "datetime")]
     private \DateTimeInterface $dateVente;

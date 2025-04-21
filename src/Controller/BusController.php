@@ -67,4 +67,20 @@ final class BusController extends AbstractController
 
         return $this->json(['message' => 'Bus supprimé avec succès']);
     }
+
+    //mettre hors circulation un bus
+    #[Route('/bus/hors-circulation/{immatriculation}', methods: ['PUT'])]
+    public function setBusHorsCirculation(BusRepository $busRepository, EntityManagerInterface $entityManager, string $immatriculation): JsonResponse
+    {
+        $bus = $busRepository->findOneBy(['immatriculation' => $immatriculation]);
+
+        if (!$bus) {
+            return $this->json(['message' => 'Bus non trouvé'], 404);
+        }
+
+        $bus->setEnCirculation(false);
+        $entityManager->flush();
+
+        return $this->json(['message' => 'Bus mis hors circulation avec succès']);
+    }
 }
