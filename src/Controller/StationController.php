@@ -2,18 +2,45 @@
 
 namespace App\Controller;
 
+use App\Entity\Station;
+use App\Repository\StationRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class StationController extends AbstractController
 {
-    #[Route('/station', name: 'app_station')]
-    public function index(): JsonResponse
+    #[Route('/stations/list', name: 'stations_list', methods: ['GET'])]
+    public function index(StationRepository $stationRepository): JsonResponse
     {
+        $stations = $stationRepository->findAll();
+        $data = array_map(fn(Station $station) => $station->toArray(), $stations);
+
         return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/StationController.php',
+            'message' => 'Liste des stations',
+            'data' => $data,
         ]);
+    }
+
+    #[Route('/station/create', name: 'station_create', methods: ['POST'])]
+    public function create(Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (!isset($data['numero'], $data['nom'], $data['adresse'])) {
+            return $this->json(['message' => 'Champs requis manquants.'], 400);
+        }
+
+        $station = (new Station())
+            ->setNumero($data['numero'])
+            ->setNom($data['nom'])
+            ->setAdresse($data['adresse']);
+
+        $em->persist($station);
+        $em->flush();
+
+        return $this->json(['message' => 'Station créée', 'data' => $station->toArray()]);
     }
 }

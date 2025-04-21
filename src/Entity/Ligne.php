@@ -1,8 +1,6 @@
 <?php
-
 namespace App\Entity;
 
-use App\Repository\Ligne\LigneRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -27,11 +25,8 @@ class Ligne
     #[ORM\Column(type: "datetime")]
     private \DateTimeInterface $dateCreation;
 
-    #[ORM\OneToMany(mappedBy: "ligne", targetEntity: Arret::class, cascade: ["persist", "remove"])]
+    // #[ORM\OneToMany(mappedBy: "ligne", targetEntity: Arret::class, cascade: ["persist", "remove"])]
     private Collection $arrets;
-
-    #[ORM\OneToMany(mappedBy: "ligne", targetEntity: Trajet::class, cascade: ["persist", "remove"])]
-    private Collection $trajets; // ✅ ajout de la relation inverse de Trajet
 
     public function __construct()
     {
@@ -39,110 +34,74 @@ class Ligne
         $this->trajets = new ArrayCollection();
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    public function getId(): ?int { return $this->id; }
 
-    public function getNbrKilometre(): int
-    {
-        return $this->nbrKilometre;
-    }
+    public function getNbrKilometre(): int { return $this->nbrKilometre; }
 
-    public function setNbrKilometre(int $nbrKilometre): self
-    {
-        $this->nbrKilometre = $nbrKilometre;
-        return $this;
-    }
+    public function setNbrKilometre(int $nbr): self { $this->nbrKilometre = $nbr; return $this; }
 
-    public function getTarif(): string
-    {
-        return $this->tarif;
-    }
+    public function getTarif(): float { return $this->tarif; }
 
-    public function setTarif(string $tarif): self
-    {
-        $this->tarif = $tarif;
-        return $this;
-    }
+    public function setTarif(float $tarif): self { $this->tarif = $tarif; return $this; }
 
-    public function getEtat(): string
-    {
-        return $this->etat;
-    }
+    public function getEtat(): string { return $this->etat; }
 
-    public function setEtat(string $etat): self
-    {
-        $this->etat = $etat;
-        return $this;
-    }
+    public function setEtat(string $etat): self { $this->etat = $etat; return $this; }
 
-    public function getDateCreation(): \DateTimeInterface
-    {
-        return $this->dateCreation;
-    }
+    public function getDateCreation(): \DateTimeInterface { return $this->dateCreation; }
 
-    public function setDateCreation(\DateTimeInterface $dateCreation): self
-    {
-        $this->dateCreation = $dateCreation;
-        return $this;
-    }
+    public function setDateCreation(\DateTimeInterface $date): self { $this->dateCreation = $date; return $this; }
 
-    /**
-     * @return Collection<int, Arret>
-     */
-    public function getArrets(): Collection
-    {
-        return $this->arrets;
-    }
+    public function getArrets(): Collection { return $this->arrets; }
 
     public function addArret(Arret $arret): self
     {
         if (!$this->arrets->contains($arret)) {
             $this->arrets[] = $arret;
-            $arret->setLigne($this);
         }
-
         return $this;
     }
 
-    public function removeArret(Arret $arret): self
+    public function getTarif(): float
     {
-        if ($this->arrets->removeElement($arret)) {
-            if ($arret->getLigne() === $this) {
-                $arret->setLigne(null);
-            }
-        }
+        return $this->tarif;
+    }
 
+    public function setTarif(float $tarif): self
+    {
+        $this->arrets->removeElement($arret);
         return $this;
     }
 
-    /**
-     * @return Collection<int, Trajet>
-     */
-    public function getTrajets(): Collection
+    public function getStationDepart(): ?Station { return $this->stationDepart; }
+
+    public function setStationDepart(?Station $station): self { $this->stationDepart = $station; return $this; }
+
+    public function getStationArrivee(): ?Station { return $this->stationArrivee; }
+
+    public function setStationArrivee(?Station $station): self { $this->stationArrivee = $station; return $this; }
+
+    public function toArray(): array
     {
-        return $this->trajets;
+        return $this->arrets;
     }
 
-    public function addTrajet(Trajet $trajet): self
-    {
-        if (!$this->trajets->contains($trajet)) {
-            $this->trajets[] = $trajet;
-            $trajet->setLigne($this);
-        }
+    // public function addArret(Arret $arret): self
+    // {
+    //     if (!$this->arrets->contains($arret)) {
+    //         $this->arrets[] = $arret;
+    //         $arret->setLigne($this);
+    //     }
+    //     return $this;
+    // }
 
-        return $this;
-    }
-
-    public function removeTrajet(Trajet $trajet): self
-    {
-        if ($this->trajets->removeElement($trajet)) {
-            if ($trajet->getLigne() === $this) {
-                $trajet->setLigne(null);
-            }
-        }
-
-        return $this;
-    }
+    // public function removeArret(Arret $arret): self
+    // {
+    //     if ($this->arrets->removeElement($arret)) {
+    //         if ($arret->getLigne() === $this) {
+    //             $arret->setLigne(null);
+    //         }
+    //     }
+    //     return $this;
+    // }
 }

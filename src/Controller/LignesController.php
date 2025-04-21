@@ -18,7 +18,7 @@ final class LignesController extends AbstractController
         private LigneServiceInterface $ligneService,
         private RequestValidator $requestValidator,
     ) {}
-
+ 
     #[Route('', name: 'get_lignes', methods: ['GET'])]
     public function index(): JsonResponse
     {
