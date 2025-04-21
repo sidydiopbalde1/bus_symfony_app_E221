@@ -35,8 +35,10 @@ class Ligne
     #[ORM\JoinColumn(nullable: true)]
     private ?Station $stationArrivee = null;
 
-    // #[ORM\OneToMany(mappedBy: "ligne", targetEntity: Arret::class, cascade: ["persist", "remove"])]
+    #[ORM\ManyToMany(targetEntity: Arret::class, inversedBy: "lignes")]
+    #[ORM\JoinTable(name: "ligne_arret")]
     private Collection $arrets;
+    
 
     public function __construct()
     {
@@ -120,22 +122,24 @@ public function toArray(): array
         ];
     }
 
-    // public function addArret(Arret $arret): self
-    // {
-    //     if (!$this->arrets->contains($arret)) {
-    //         $this->arrets[] = $arret;
-    //         $arret->setLigne($this);
-    //     }
-    //     return $this;
-    // }
-
-    // public function removeArret(Arret $arret): self
-    // {
-    //     if ($this->arrets->removeElement($arret)) {
-    //         if ($arret->getLigne() === $this) {
-    //             $arret->setLigne(null);
-    //         }
-    //     }
-    //     return $this;
-    // }
+    public function addArret(Arret $arret): self
+    {
+        if (!$this->arrets->contains($arret)) {
+            $this->arrets[] = $arret;
+            $arret->getLignes()->add($this);
+        }
+    
+        return $this;
+    }
+    
+    public function removeArret(Arret $arret): self
+    {
+        if ($this->arrets->contains($arret)) {
+            $this->arrets->removeElement($arret);
+            $arret->getLignes()->removeElement($this);
+        }
+    
+        return $this;
+    }
+    
 }
