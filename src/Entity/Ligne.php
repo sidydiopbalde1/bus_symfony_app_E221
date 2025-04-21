@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
+use App\Repository\Ligne\LigneRepository as LigneLigneRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\LigneRepository;
 
-#[ORM\Entity(repositoryClass: LigneRepository::class)]
+#[ORM\Entity(repositoryClass: LigneLigneRepository::class)]
 class Ligne
 {
     #[ORM\Id]
@@ -26,6 +27,13 @@ class Ligne
 
     #[ORM\Column(type: "datetime")]
     private \DateTimeInterface $dateCreation;
+    #[ORM\ManyToOne(targetEntity: Station::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Station $stationDepart = null;
+
+    #[ORM\ManyToOne(targetEntity: Station::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Station $stationArrivee = null;
 
     // #[ORM\OneToMany(mappedBy: "ligne", targetEntity: Arret::class, cascade: ["persist", "remove"])]
     private Collection $arrets;
@@ -90,6 +98,26 @@ class Ligne
     public function getArrets(): Collection
     {
         return $this->arrets;
+    }
+    public function getStationDepart(): ?Station { return $this->stationDepart; }
+
+    public function setStationDepart(?Station $station): self { $this->stationDepart = $station; return $this; }
+    public function getStationArrivee(): ?Station { return $this->stationArrivee; }
+
+    public function setStationArrivee(?Station $station): self { $this->stationArrivee = $station; return $this; }
+
+public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'nbrKilometre' => $this->getNbrKilometre(),
+            'tarif' => $this->getTarif(),
+            'etat' => $this->getEtat(),
+            'dateCreation' => $this->getDateCreation()->format('Y-m-d'),
+            'stationDepart' => $this->stationDepart?->toArray(),
+            'stationArrivee' => $this->stationArrivee?->toArray(),
+            'arrets' => array_map(fn($a) => $a->toArray(), $this->arrets->toArray()),
+        ];
     }
 
     // public function addArret(Arret $arret): self

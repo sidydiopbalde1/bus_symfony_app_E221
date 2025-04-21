@@ -17,7 +17,7 @@ security:
             pattern: ^/api
             stateless: true
             provider: app_user_provider
-            jwt: ~  # Utilisation du JWT pour l'authentification
+            jwt: ~  # LexikJWT gère l'authentification avec les tokens JWT
 
         main:
             lazy: true
@@ -35,8 +35,16 @@ security:
                 - App\Security\ApiAuthenticator
 
     access_control:
+        # Autorise l'accès à /api/login sans authentification
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
+
+        # Autorise les requêtes OPTIONS sans auth (important pour CORS)
+        - { path: ^/api, methods: [OPTIONS], roles: PUBLIC_ACCESS }
+
+        # Toutes les autres routes API nécessitent une authentification
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+
+        # Contrôle d'accès pour d'autres rôles
         - { path: ^/rp, roles: ROLE_RP }
         - { path: ^/rt, roles: ROLE_RT }
         - { path: ^/admin, roles: ROLE_ADMIN }
