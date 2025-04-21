@@ -40,7 +40,33 @@ class Arret
     public function setNumero(int $numero): self { $this->numero = $numero; return $this; }
 
     public function getLignes(): Collection { return $this->lignes; }
-
+    public function addLigne(Ligne $ligne): self
+    {
+        if (!$this->lignes->contains($ligne)) {
+            $this->lignes->add($ligne);
+            $ligne->getArrets()->add($this); // Ajoute l'arrêt à la ligne également
+        }
+    
+        return $this;
+    }
+    
+    public function setLigne(Collection $lignes): self
+    {
+        // Supprimer les lignes existantes
+        foreach ($this->lignes as $ligne) {
+            $ligne->getArrets()->removeElement($this);
+        }
+    
+        $this->lignes = $lignes;
+    
+        foreach ($lignes as $ligne) {
+            if (!$ligne->getArrets()->contains($this)) {
+                $ligne->getArrets()->add($this);
+            }
+        }
+    
+        return $this;
+    }
     public function toArray(): array
     {
         return [
