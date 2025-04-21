@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250421135718 extends AbstractMigration
+final class Version20250421155458 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -35,21 +35,6 @@ final class Version20250421135718 extends AbstractMigration
         $this->addSql(<<<'SQL'
             ALTER TABLE ligne_arret ADD CONSTRAINT FK_B87DBD3E68F1C150 FOREIGN KEY (arret_id) REFERENCES arret (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE
         SQL);
-        $this->addSql(<<<'SQL'
-            ALTER TABLE panne ALTER bus_id SET NOT NULL
-        SQL);
-        $this->addSql(<<<'SQL'
-            ALTER TABLE trajet DROP type
-        SQL);
-        $this->addSql(<<<'SQL'
-            ALTER TABLE trajet RENAME COLUMN nbr_ticket TO bus_id
-        SQL);
-        $this->addSql(<<<'SQL'
-            ALTER TABLE trajet ADD CONSTRAINT FK_2B5BA98C2546731D FOREIGN KEY (bus_id) REFERENCES bus (id) NOT DEFERRABLE INITIALLY IMMEDIATE
-        SQL);
-        $this->addSql(<<<'SQL'
-            CREATE INDEX IDX_2B5BA98C2546731D ON trajet (bus_id)
-        SQL);
     }
 
     public function down(Schema $schema): void
@@ -66,21 +51,6 @@ final class Version20250421135718 extends AbstractMigration
         SQL);
         $this->addSql(<<<'SQL'
             DROP TABLE ligne_arret
-        SQL);
-        $this->addSql(<<<'SQL'
-            ALTER TABLE panne ALTER bus_id DROP NOT NULL
-        SQL);
-        $this->addSql(<<<'SQL'
-            ALTER TABLE trajet DROP CONSTRAINT FK_2B5BA98C2546731D
-        SQL);
-        $this->addSql(<<<'SQL'
-            DROP INDEX IDX_2B5BA98C2546731D
-        SQL);
-        $this->addSql(<<<'SQL'
-            ALTER TABLE trajet ADD type VARCHAR(100) NOT NULL
-        SQL);
-        $this->addSql(<<<'SQL'
-            ALTER TABLE trajet RENAME COLUMN bus_id TO nbr_ticket
         SQL);
     }
 }

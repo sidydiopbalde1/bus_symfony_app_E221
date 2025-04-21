@@ -2,18 +2,53 @@
 
 namespace App\Controller;
 
+use App\Dto\Trajet\CreateTrajetRequest;
+use App\Entity\Trajet;
+use App\Interfaces\Services\Trajet\TrajetServiceInterface;
+use App\Service\Validator\RequestValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
-final class TrajetController extends AbstractController
+#[Route('/trajets')]
+class TrajetController extends AbstractController
 {
-    #[Route('/trajet', name: 'app_trajet')]
-    public function index(): JsonResponse
+    public function __construct(
+        private TrajetServiceInterface $trajetService,
+        private RequestValidator $requestValidator
+    ) {}
+
+    #[Route('', name: 'planifier_trajet', methods: ['POST'])]
+    public function planifier(Request $request): JsonResponse
     {
+        /** @var CreateTrajetRequest $dto */
+        $dto = $this->requestValidator->validate($request->getContent(), CreateTrajetRequest::class);
+
+        $trajet = $this->trajetService->planifierTrajet($dto);
+
         return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/TrajetController.php',
-        ]);
+            'message' => 'Trajet planifié avec succès',
+            'id' => $trajet->getId()
+        ], Response::HTTP_CREATED);
+    }
+
+    #[Route('', name: 'lister_trajets', methods: ['GET'])]
+    public function lister(): JsonResponse
+    {
+        $trajets = $this->trajetService->listerTrajets();
+
+        $data = array_map(fn(Trajet $t) => [
+            'id' => $t->getId(),
+            'bus' => $t->getBus()?->toArray(),
+            'ligne' => $t->getLigne()?->toArray(),
+            'date' => $t->getDatePlanification()->format('Y-m-d H:i:s'),
+            'type' => $t->getType(),
+            'ticketsPlanifies' => $t->getNombreTicketsPlanifie(),
+            'ticketsVendus' => $t->getNombreTicketsVendus(),
+        ], $trajets);
+
+        return $this->json($data);
     }
 }
