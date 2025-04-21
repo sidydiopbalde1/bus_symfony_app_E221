@@ -17,4 +17,6 @@ services:
     App\Interfaces\Repositories\Ligne\LigneRepositoryInterface: '@App\Repository\Ligne\LigneRepository'
     App\Interfaces\Services\Arret\ArretServiceInterface: '@App\Service\Arret\ArretService'
     App\Interfaces\Repositories\Arret\ArretRepositoryInterface: '@App\Repository\Arret\ArretRepository'
+    App\Interfaces\Services\Trajet\TrajetServiceInterface: '@App\Service\Trajet\TrajetService'
+    App\Interfaces\Repositories\Trajet\TrajetRepositoryInterface: '@App\Repository\Trajet\TrajetRepository'
 

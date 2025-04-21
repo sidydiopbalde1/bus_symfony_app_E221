@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250421130819 extends AbstractMigration
+final class Version20250421172459 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,13 +21,16 @@ final class Version20250421130819 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE ligne_arret DROP CONSTRAINT fk_b87dbd3e5a438e76
+            ALTER TABLE trajet ADD date_planification TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE ligne_arret DROP CONSTRAINT fk_b87dbd3e68f1c150
+            ALTER TABLE trajet ADD type VARCHAR(20) NOT NULL
         SQL);
         $this->addSql(<<<'SQL'
-            DROP TABLE ligne_arret
+            ALTER TABLE trajet ADD nombre_tickets_planifie INT NOT NULL
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE trajet ADD nombre_tickets_vendus INT NOT NULL
         SQL);
     }
 
@@ -38,19 +41,16 @@ final class Version20250421130819 extends AbstractMigration
             CREATE SCHEMA public
         SQL);
         $this->addSql(<<<'SQL'
-            CREATE TABLE ligne_arret (ligne_id INT NOT NULL, arret_id INT NOT NULL, PRIMARY KEY(ligne_id, arret_id))
+            ALTER TABLE trajet DROP date_planification
         SQL);
         $this->addSql(<<<'SQL'
-            CREATE INDEX idx_b87dbd3e68f1c150 ON ligne_arret (arret_id)
+            ALTER TABLE trajet DROP type
         SQL);
         $this->addSql(<<<'SQL'
-            CREATE INDEX idx_b87dbd3e5a438e76 ON ligne_arret (ligne_id)
+            ALTER TABLE trajet DROP nombre_tickets_planifie
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE ligne_arret ADD CONSTRAINT fk_b87dbd3e5a438e76 FOREIGN KEY (ligne_id) REFERENCES ligne (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE
-        SQL);
-        $this->addSql(<<<'SQL'
-            ALTER TABLE ligne_arret ADD CONSTRAINT fk_b87dbd3e68f1c150 FOREIGN KEY (arret_id) REFERENCES arret (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE
+            ALTER TABLE trajet DROP nombre_tickets_vendus
         SQL);
     }
 }
