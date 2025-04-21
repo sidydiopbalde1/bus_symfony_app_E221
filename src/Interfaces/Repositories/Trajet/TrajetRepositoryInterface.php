@@ -14,4 +14,7 @@ interface TrajetRepositoryInterface
      * Vérifie si un bus a déjà un trajet planifié à une date donnée.
      */
     public function hasTrajetForBusAtDate(int $busId, \DateTimeInterface $date): bool;
+    
+    public function findLigneById(int $id): ?Trajet;
+
 }

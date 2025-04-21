@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Dto\Trajet\ValiderTrajetRequest;
+
 
 #[Route('/trajets')]
 class TrajetController extends AbstractController
@@ -51,4 +53,23 @@ class TrajetController extends AbstractController
 
         return $this->json($data);
     }
+    #[Route('/{id}/valider', name: 'valider_trajet', methods: ['PUT'])]
+public function valider(int $id, Request $request): JsonResponse
+{
+    /** @var ValiderTrajetRequest $dto */
+    $dto = $this->requestValidator->validate($request->getContent(), ValiderTrajetRequest::class);
+
+    $trajet = $this->trajetService->validerTrajet($id, $dto);
+
+    if (!$trajet) {
+        return $this->json(['message' => 'Trajet introuvable.'], Response::HTTP_NOT_FOUND);
+    }
+
+    return $this->json([
+        'message' => 'Trajet validé avec succès.',
+        'id' => $trajet->getId(),
+        'ticketsVendus' => $trajet->getNombreTicketsVendus(),
+        'dateValidation' => $trajet->getDateValidation()?->format('Y-m-d H:i:s'),
+    ]);
+}
 }

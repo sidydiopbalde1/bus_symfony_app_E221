@@ -35,6 +35,9 @@ class Trajet
     #[ORM\Column(type: 'integer')]
     private int $nombreTicketsVendus = 0;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $dateValidation = null;
+
     #[ORM\OneToMany(mappedBy: "trajet", targetEntity: Ticket::class, cascade: ["persist"], orphanRemoval: true)]
     private Collection $tickets;
 
@@ -111,6 +114,17 @@ class Trajet
     public function setNombreTicketsVendus(int $nombreTicketsVendus): self
     {
         $this->nombreTicketsVendus = $nombreTicketsVendus;
+        return $this;
+    }
+
+    public function getDateValidation(): ?\DateTimeInterface
+    {
+        return $this->dateValidation;
+    }
+
+    public function setDateValidation(?\DateTimeInterface $dateValidation): self
+    {
+        $this->dateValidation = $dateValidation;
         return $this;
     }
 

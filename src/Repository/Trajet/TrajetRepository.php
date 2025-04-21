@@ -44,5 +44,15 @@ class TrajetRepository extends ServiceEntityRepository implements TrajetReposito
     
         return $qb->getQuery()->getSingleScalarResult() > 0;
     }
-    
+ 
+    public function findLigneById(int $id): ?Trajet
+   
+    {
+        return $this->createQueryBuilder('T')
+            ->where('T.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
 }

@@ -3,6 +3,7 @@
 namespace App\Service\Trajet;
 
 use App\Dto\Trajet\CreateTrajetRequest;
+use App\Dto\Trajet\ValiderTrajetRequest;
 use App\Entity\Ticket;
 use App\Entity\Trajet;
 use App\Interfaces\Repositories\Trajet\TrajetRepositoryInterface;
@@ -51,7 +52,6 @@ class TrajetService implements TrajetServiceInterface
         $trajet->setNombreTicketsPlanifie($dto->nombreTickets);
         $trajet->setNombreTicketsVendus(0);
 
-        // Création des tickets
         for ($i = 0; $i < $dto->nombreTickets; $i++) {
             $ticket = new Ticket();
             $ticket->setPrix((string) $ligne->getTarif());
@@ -70,5 +70,34 @@ class TrajetService implements TrajetServiceInterface
     {
         return $this->trajetRepository->findAll();
     }
-}
 
+    public function validerTrajet(int $trajetId, ValiderTrajetRequest $dto): ?Trajet
+    {
+        $trajet = $this->trajetRepository->findLigneById($trajetId);
+
+
+        if (!$trajet) {
+            return null;
+        }
+
+        $dateValidation = \DateTime::createFromFormat('Y-m-d H:i:s', $dto->dateValidation);
+        if (!$dateValidation) {
+            throw new BadRequestHttpException("Date de validation invalide.");
+        }
+
+        if ($dateValidation->format('Y-m-d') !== $trajet->getDatePlanification()->format('Y-m-d')) {
+            throw new BadRequestHttpException("La validation doit se faire le jour planifié.");
+        }
+
+        if ($dto->nombreTicketsVendus > $trajet->getNombreTicketsPlanifie()) {
+            throw new BadRequestHttpException("Nombre de tickets vendus supérieur au planifié.");
+        }
+
+        $trajet->setNombreTicketsVendus($dto->nombreTicketsVendus);
+        $trajet->setDateValidation($dateValidation);
+
+        $this->trajetRepository->save($trajet);
+
+        return $trajet;
+    }
+}
