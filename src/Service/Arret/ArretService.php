@@ -19,21 +19,27 @@ class ArretService implements ArretServiceInterface
 
     public function create(CreateArretRequest $dto): Arret
     {
-        $ligne = $this->ligneRepository->find($dto->ligneId);
-
-        if (!$ligne) {
-            throw new \InvalidArgumentException("Ligne non trouvée.");
+        // On récupère toutes les lignes à associer à cet arrêt.
+        $lignes = $this->ligneRepository->findById($dto->ligneId); // Suppose que $dto->ligneIds est un tableau d'IDs
+    
+        if (empty($lignes)) {
+            throw new \InvalidArgumentException("Lignes non trouvées.");
         }
-
+    
         $arret = new Arret();
         $arret->setNom($dto->nom);
         $arret->setNumero($dto->numero);
-        $arret->setLigne($ligne);
-
+    
+        // Associer cet arrêt à toutes les lignes
+        foreach ($lignes as $ligne) {
+            $arret->addLigne($ligne);
+        }
+    
         $this->arretRepository->add($arret);
-
+    
         return $arret;
     }
+    
 
     public function getByLigne(int $ligneId): array
     {

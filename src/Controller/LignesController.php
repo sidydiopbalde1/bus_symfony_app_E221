@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Dto\Ligne\CreateLigneRequest;
+use App\Entity\Ligne;
 use App\Interfaces\Services\Ligne\LigneServiceInterface;
+use App\Repository\Ligne\LigneRepository;
 use App\Service\Validator\RequestValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,27 +20,16 @@ final class LignesController extends AbstractController
         private LigneServiceInterface $ligneService,
         private RequestValidator $requestValidator,
     ) {}
-
+ 
     #[Route('', name: 'get_lignes', methods: ['GET'])]
-    public function index(): JsonResponse
+    public function index(LigneRepository $ligneRepository): JsonResponse
     {
-        $lignes = $this->ligneService->getLignesWithArretCount();
-
-        $data = array_map(function ($item) {
-            $ligne = $item[0];
-            return [
-                'id' => $ligne->getId(),
-                'nbrKilometre' => $ligne->getNbrKilometre(),
-                'tarif' => $ligne->getTarif(),
-                'etat' => $ligne->getEtat(),
-                'dateCreation' => $ligne->getDateCreation()->format('Y-m-d H:i:s'),
-                'nombreArrets' => (int) $item['arretCount'],
-            ];
-        }, $lignes);
+        $lignes = $ligneRepository->findAll();
+        $data = array_map(fn(Ligne $lg) => $lg->toArray(), $lignes);
 
         return $this->json($data);
     }
-
+    
     #[Route('', name: 'create_ligne', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {

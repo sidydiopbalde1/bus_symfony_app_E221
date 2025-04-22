@@ -4,7 +4,8 @@ namespace App\Controller;
 
 use App\Dto\Arret\CreateArretRequest;
 use App\Interfaces\Services\Arret\ArretServiceInterface;
-use App\Service\Validator\RequestValidator;
+//use App\Service\RequestValidator as ServiceRequestValidator;
+use App\Service\Validator\RequestValidator   as ServiceRequestValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +17,7 @@ class ArretController extends AbstractController
 {
     public function __construct(
         private ArretServiceInterface $arretService,
-        private RequestValidator $requestValidator
+        private ServiceRequestValidator $requestValidator
     ) {}
 
     #[Route('', name: 'create_arret', methods: ['POST'])]

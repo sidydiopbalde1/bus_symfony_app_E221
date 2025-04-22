@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\StationRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: StationRepository::class)]
 class Station
@@ -22,41 +21,27 @@ class Station
     #[ORM\Column(type: "string", length: 255)]
     private string $adresse;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    public function getId(): ?int { return $this->id; }
 
-    public function getNumero(): int
-    {
-        return $this->numero;
-    }
+    public function getNumero(): int { return $this->numero; }
 
-    public function setNumero(int $numero): self
-    {
-        $this->numero = $numero;
-        return $this;
-    }
+    public function setNumero(int $numero): self { $this->numero = $numero; return $this; }
 
-    public function getNom(): string
-    {
-        return $this->nom;
-    }
+    public function getNom(): string { return $this->nom; }
 
-    public function setNom(string $nom): self
-    {
-        $this->nom = $nom;
-        return $this;
-    }
+    public function setNom(string $nom): self { $this->nom = $nom; return $this; }
 
-    public function getAdresse(): string
-    {
-        return $this->adresse;
-    }
+    public function getAdresse(): string { return $this->adresse; }
 
-    public function setAdresse(string $adresse): self
+    public function setAdresse(string $adresse): self { $this->adresse = $adresse; return $this; }
+
+    public function toArray(): array
     {
-        $this->adresse = $adresse;
-        return $this;
+        return [
+            'id' => $this->id,
+            'numero' => $this->numero,
+            'nom' => $this->nom,
+            'adresse' => $this->adresse,
+        ];
     }
 }
