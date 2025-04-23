@@ -43,5 +43,19 @@ final class StationController extends AbstractController
 
         return $this->json(['message' => 'Station créée', 'data' => $station->toArray()]);
     }
-    
+
+    //liste des stations par ligne
+    #[Route('/station/ligne/{id}', name: 'station_by_ligne', methods: ['GET'])]
+    public function getByLigne(int $id, StationRepository $stationRepository): JsonResponse
+    {
+        $stations = $stationRepository->findBy(['ligne' => $id]);
+
+        if (!$stations) {
+            return $this->json(['message' => 'Aucune station trouvée pour cette ligne'], 404);
+        }
+
+        $data = array_map(fn(Station $station) => $station->toArray(), $stations);
+
+        return $this->json($data);
+    }
 }
